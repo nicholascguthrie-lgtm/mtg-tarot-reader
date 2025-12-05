@@ -1,316 +1,299 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
+
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    span.s1 {font: 12.0px 'Apple Color Emoji'}
-  </style>
+    <title>MTG Variable Spread Reading</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        #controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Styling for controls */
+        #spread-size-selector, #language-selector, #draw-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin: 0 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        #draw-button {
+            font-weight: bold;
+            color: white;
+            background-color: #337ab7;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        
+        #draw-button:hover {
+            background-color: #285e8e;
+        }
+        
+        /* CONTAINER RESET */
+        #image-gallery {
+            display: grid; 
+            justify-content: center;
+            align-content: center;
+            gap: 10px; 
+            padding: 20px;
+        }
+
+        /* Styling for the container DIV */
+        .card-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Styling for the short label */
+        .card-label {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 2px;
+            color: #A3333D;
+        }
+        
+        /* Styling for the interpretive description */
+        .card-description {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #555;
+            max-width: 300px;
+        }
+        
+        /* Basic styling for the images */
+        .card-slot img {
+            width: 300px; 
+            height: 420px;
+            object-fit: cover; 
+            border-radius: 15px; 
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* === DYNAMIC LAYOUT CLASSES BASED ON SPREAD SIZE === */
+        
+        /* --- 3-Card Spread (The Triumvirate) --- */
+        .spread-layout-3 {
+            grid-template-columns: 300px 300px 300px;
+            grid-template-rows: 500px;
+        }
+        .spread-layout-3 .card-slot:nth-child(1) { grid-area: 1 / 1; }
+        .spread-layout-3 .card-slot:nth-child(2) { grid-area: 1 / 2; }
+        .spread-layout-3 .card-slot:nth-child(3) { grid-area: 1 / 3; }
+
+        /* --- 5-Card Spread (The Cross) --- */
+        .spread-layout-5 {
+            grid-template-columns: 300px 300px 300px;
+            grid-template-rows: 500px 500px 500px;
+        }
+        .spread-layout-5 .card-slot:nth-child(1) { grid-area: 1 / 2; }
+        .spread-layout-5 .card-slot:nth-child(2) { grid-area: 2 / 1; }
+        .spread-layout-5 .card-slot:nth-child(3) { grid-area: 2 / 2; }
+        .spread-layout-5 .card-slot:nth-child(4) { grid-area: 2 / 3; }
+        .spread-layout-5 .card-slot:nth-child(5) { grid-area: 3 / 2; }
+        
+        /* --- 7-Card Spread (The Progression / Pyramid) --- */
+        .spread-layout-7 {
+            grid-template-columns: 300px 300px 300px;
+            grid-template-rows: 500px 500px 500px;
+        }
+        .spread-layout-7 .card-slot:nth-child(1) { grid-area: 1 / 1; } 
+        .spread-layout-7 .card-slot:nth-child(2) { grid-area: 1 / 2; }
+        .spread-layout-7 .card-slot:nth-child(3) { grid-area: 1 / 3; }
+        .spread-layout-7 .card-slot:nth-child(4) { grid-area: 2 / 2; } 
+        .spread-layout-7 .card-slot:nth-child(5) { grid-area: 3 / 1; }
+        .spread-layout-7 .card-slot:nth-child(6) { grid-area: 3 / 2; }
+        .spread-layout-7 .card-slot:nth-child(7) { grid-area: 3 / 3; }
+        
+    </style>
 </head>
+
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;MTG Variable Spread Reading&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* General Styling */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f4f4f4;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>h1 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #4CAF50;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>#controls {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 30px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Styling for controls */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#spread-size-selector, #language-selector, #draw-button {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px 15px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 5px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #ccc;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>#draw-button {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #337ab7;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>#draw-button:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #285e8e;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* CONTAINER RESET */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#image-gallery {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: grid;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 10px;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Styling for the container DIV */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-slot {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Styling for the short label */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-label {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.2em;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 2px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #A3333D;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Styling for the interpretive description */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-description {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.9em;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-style: italic;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 5px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #555;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 300px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* Basic styling for the images */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-slot img {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 300px;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 420px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>object-fit: cover;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 15px;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* === DYNAMIC LAYOUT CLASSES BASED ON SPREAD SIZE === */</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* --- 3-Card Spread (The Triumvirate) --- */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-3 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: 300px 300px 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-rows: 500px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-3 .card-slot:nth-child(1) { grid-area: 1 / 1; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-3 .card-slot:nth-child(2) { grid-area: 1 / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-3 .card-slot:nth-child(3) { grid-area: 1 / 3; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* --- 5-Card Spread (The Cross) --- */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: 300px 300px 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-rows: 500px 500px 500px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 .card-slot:nth-child(1) { grid-area: 1 / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 .card-slot:nth-child(2) { grid-area: 2 / 1; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 .card-slot:nth-child(3) { grid-area: 2 / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 .card-slot:nth-child(4) { grid-area: 2 / 3; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-5 .card-slot:nth-child(5) { grid-area: 3 / 2; }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>/* --- 7-Card Spread (The Progression / Pyramid) --- */</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: 300px 300px 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-rows: 500px 500px 500px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(1) { grid-area: 1 / 1; }<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(2) { grid-area: 1 / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(3) { grid-area: 1 / 3; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(4) { grid-area: 2 / 2; }<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(5) { grid-area: 3 / 1; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(6) { grid-area: 3 / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.spread-layout-7 .card-slot:nth-child(7) { grid-area: 3 / 3; }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;MTG Variable Spread Reading <span class="s1">🔮</span>&lt;/h1&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="controls"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="language-selector"&gt;Language:&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;select id="language-selector"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="en" selected&gt;English&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="es"&gt;Spanish&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="fr"&gt;French&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="de"&gt;German&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="it"&gt;Italian&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="pt"&gt;Portuguese&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="ja"&gt;Japanese&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="ko"&gt;Korean&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="ru"&gt;Russian&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="zhs"&gt;Chinese (Simplified)&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="zht"&gt;Chinese (Traditional)&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="spread-size-selector"&gt;Spread Size:&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;select id="spread-size-selector"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="3"&gt;3 Cards - The Triumvirate&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="5" selected&gt;5 Cards - The Cross&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="7"&gt;7 Cards - The Progression&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="draw-button"&gt;Draw New Cards&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="image-gallery"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const BASE_API_URL = 'https://api.scryfall.com/cards/random';<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const galleryContainer = document.getElementById('image-gallery');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const drawButton = document.getElementById('draw-button');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const sizeSelector = document.getElementById('spread-size-selector');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const languageSelector = document.getElementById('language-selector');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const THROTTLE_DELAY_MS = 100;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const allCardMeanings = {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>3: [</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "1. The Past", longDescription: "Represents influences, events, or mindsets that have already occurred and shaped the current situation." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "2. The Present", longDescription: "The state of the matter right now. This is the core energy and decision-point you currently face." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "3. The Future", longDescription: "The potential outcome or direction if the present course is maintained. Not fixed, but likely." }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>5: [</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "1. The Present", longDescription: "The immediate focus of the reading; what is active and happening right now." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "2. Past Influence", longDescription: "The critical event or action from the recent past that sets the stage for the current core issue." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "3. The Self / Core Issue", longDescription: "The deepest challenge, the underlying truth, or the role the querent (you) plays in the situation." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "4. Future Potential", longDescription: "The likely result of the situation based on current trends and choices." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "5. The Lesson / Outcome", longDescription: "Advice, a warning, or the ultimate wisdom to be gained from the entire spread." }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>7: [</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "1. Past Foundation", longDescription: "The history or roots of the matter; how the current circumstances were established." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "2. Hidden Influence", longDescription: "Unseen, internal, or subconscious forces at play that may be blocking a solution." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "3. The Potential", longDescription: "Opportunities or resources that are available to you, but have not yet been used." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "4. The Present Situation", longDescription: "The heart of the reading. What needs to be understood or addressed immediately." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "5. Action/Advice", longDescription: "The recommended course of action, behavior, or attitude to adopt to move forward." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "6. Obstacle/Challenge", longDescription: "An external or obvious difficulty that must be faced or overcome." },</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{ shortLabel: "7. The Final Outcome", longDescription: "The projected final state or resolution, provided the suggested actions are followed." }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>]</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function delay(ms) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return new Promise(resolve =&gt; setTimeout(resolve, ms));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>async function getCardImageUrl(queryUrl) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const response = await fetch(queryUrl);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (response.status === 429) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>throw new Error(`Rate Limit Exceeded (HTTP 429). Please wait a moment before retrying.`);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!response.ok) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>throw new Error(`HTTP error! Status: ${response.status}`);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const data = await response.json();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return data.image_uris.normal;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>async function getMultipleImages() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const numberOfCards = parseInt(sizeSelector.value);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const selectedLanguage = languageSelector.value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const currentMeanings = allCardMeanings[numberOfCards];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const layoutClass = `spread-layout-${numberOfCards}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>galleryContainer.className = '';<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>galleryContainer.classList.add(layoutClass);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// ------------------------------------------------------------------</p>
-<p class="p1"><span class="Apple-converted-space">            </span>// --- REVERTED FIX: Using the simple, stable language filter ---</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const queryParam = `q=lang:${selectedLanguage}`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>// ------------------------------------------------------------------</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const fullApiUrl = `${BASE_API_URL}?${queryParam}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>drawButton.disabled = true;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>galleryContainer.innerHTML = `&lt;p&gt;Fetching ${numberOfCards} new cards in ${selectedLanguage.toUpperCase()}...&lt;/p&gt;`;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const imageUrlArray = [];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Throttled loop for fetching card URLs</p>
-<p class="p1"><span class="Apple-converted-space">                </span>for (let i = 0; i &lt; numberOfCards; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const imageUrl = await getCardImageUrl(fullApiUrl);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>imageUrlArray.push(imageUrl);</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (i &lt; numberOfCards - 1) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>await delay(THROTTLE_DELAY_MS);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>galleryContainer.innerHTML = '';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Loop through the collected URLs and build the HTML structure</p>
-<p class="p1"><span class="Apple-converted-space">                </span>imageUrlArray.forEach((imageUrl, index) =&gt; {</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const cardData = currentMeanings[index];</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const cardSlot = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>cardSlot.className = 'card-slot';</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const label = document.createElement('p');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>label.className = 'card-label';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>label.textContent = cardData.shortLabel;</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const description = document.createElement('p');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>description.className = 'card-description';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>description.textContent = cardData.longDescription;</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const img = document.createElement('img');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>img.src = imageUrl;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>img.alt = `MTG Card for position ${cardData.shortLabel}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>cardSlot.appendChild(label);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>cardSlot.appendChild(description);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>cardSlot.appendChild(img);</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>galleryContainer.appendChild(cardSlot);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>console.error('There was a problem fetching the MTG cards:', error);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const displayMessage = error.message.includes('Rate Limit Exceeded')</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>? 'Rate limit hit. Please wait 10 seconds and try again.'</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>: 'Sorry, could not load the MTG cards. Check your connection or API status.';</p>
-<p class="p2"><span class="Apple-converted-space">                    </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>galleryContainer.innerHTML = `&lt;p&gt;${displayMessage}&lt;/p&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} finally {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>drawButton.disabled = false;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// --- Event Listeners ---</p>
-<p class="p1"><span class="Apple-converted-space">        </span>drawButton.addEventListener('click', getMultipleImages);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>sizeSelector.addEventListener('change', getMultipleImages);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>languageSelector.addEventListener('change', getMultipleImages);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Initial load</p>
-<p class="p1"><span class="Apple-converted-space">        </span>getMultipleImages();<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+    <h1>MTG Variable Spread Reading 🔮</h1>
+    
+    <div id="controls">
+        <label for="language-selector">Language:</label>
+        <select id="language-selector">
+            <option value="en" selected>English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+            <option value="pt">Portuguese</option>
+            <option value="ja">Japanese</option>
+            <option value="ko">Korean</option>
+            <option value="ru">Russian</option>
+            <option value="zhs">Chinese (Simplified)</option>
+            <option value="zht">Chinese (Traditional)</option>
+        </select>
+        
+        <label for="spread-size-selector">Spread Size:</label>
+        <select id="spread-size-selector">
+            <option value="3">3 Cards - The Triumvirate</option>
+            <option value="5" selected>5 Cards - The Cross</option>
+            <option value="7">7 Cards - The Progression</option>
+        </select>
+        
+        <button id="draw-button">Draw New Cards</button>
+    </div>
+
+    <div id="image-gallery">
+        </div>
+
+    <script>
+        const BASE_API_URL = 'https://api.scryfall.com/cards/random'; 
+        const galleryContainer = document.getElementById('image-gallery');
+        const drawButton = document.getElementById('draw-button');
+        const sizeSelector = document.getElementById('spread-size-selector');
+        const languageSelector = document.getElementById('language-selector');
+
+        const THROTTLE_DELAY_MS = 100;
+
+        const allCardMeanings = {
+            3: [
+                { shortLabel: "1. The Past", longDescription: "Represents influences, events, or mindsets that have already occurred and shaped the current situation." },
+                { shortLabel: "2. The Present", longDescription: "The state of the matter right now. This is the core energy and decision-point you currently face." },
+                { shortLabel: "3. The Future", longDescription: "The potential outcome or direction if the present course is maintained. Not fixed, but likely." }
+            ],
+            5: [
+                { shortLabel: "1. The Present", longDescription: "The immediate focus of the reading; what is active and happening right now." },
+                { shortLabel: "2. Past Influence", longDescription: "The critical event or action from the recent past that sets the stage for the current core issue." },
+                { shortLabel: "3. The Self / Core Issue", longDescription: "The deepest challenge, the underlying truth, or the role the querent (you) plays in the situation." },
+                { shortLabel: "4. Future Potential", longDescription: "The likely result of the situation based on current trends and choices." },
+                { shortLabel: "5. The Lesson / Outcome", longDescription: "Advice, a warning, or the ultimate wisdom to be gained from the entire spread." }
+            ],
+            7: [
+                { shortLabel: "1. Past Foundation", longDescription: "The history or roots of the matter; how the current circumstances were established." },
+                { shortLabel: "2. Hidden Influence", longDescription: "Unseen, internal, or subconscious forces at play that may be blocking a solution." },
+                { shortLabel: "3. The Potential", longDescription: "Opportunities or resources that are available to you, but have not yet been used." },
+                { shortLabel: "4. The Present Situation", longDescription: "The heart of the reading. What needs to be understood or addressed immediately." },
+                { shortLabel: "5. Action/Advice", longDescription: "The recommended course of action, behavior, or attitude to adopt to move forward." },
+                { shortLabel: "6. Obstacle/Challenge", longDescription: "An external or obvious difficulty that must be faced or overcome." },
+                { shortLabel: "7. The Final Outcome", longDescription: "The projected final state or resolution, provided the suggested actions are followed." }
+            ]
+        };
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function getCardImageUrl(queryUrl) {
+            const response = await fetch(queryUrl);
+
+            if (response.status === 429) {
+                throw new Error(`Rate Limit Exceeded (HTTP 429). Please wait a moment before retrying.`);
+            }
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.image_uris.normal; 
+        }
+
+
+        async function getMultipleImages() {
+            const numberOfCards = parseInt(sizeSelector.value);
+            const selectedLanguage = languageSelector.value;
+            const currentMeanings = allCardMeanings[numberOfCards];
+
+            const layoutClass = `spread-layout-${numberOfCards}`;
+
+            galleryContainer.className = ''; 
+            galleryContainer.classList.add(layoutClass);
+
+            // ------------------------------------------------------------------
+            // --- REVERTED FIX: Using the simple, stable language filter ---
+            const queryParam = `q=lang:${selectedLanguage}`;
+            // ------------------------------------------------------------------
+            
+            const fullApiUrl = `${BASE_API_URL}?${queryParam}`;
+
+            drawButton.disabled = true;
+            galleryContainer.innerHTML = `<p>Fetching ${numberOfCards} new cards in ${selectedLanguage.toUpperCase()}...</p>`;
+            
+            const imageUrlArray = [];
+
+            try {
+                // Throttled loop for fetching card URLs
+                for (let i = 0; i < numberOfCards; i++) {
+                    const imageUrl = await getCardImageUrl(fullApiUrl);
+                    imageUrlArray.push(imageUrl);
+                    
+                    if (i < numberOfCards - 1) {
+                        await delay(THROTTLE_DELAY_MS);
+                    }
+                }
+
+                galleryContainer.innerHTML = '';
+
+                // Loop through the collected URLs and build the HTML structure
+                imageUrlArray.forEach((imageUrl, index) => {
+                    
+                    const cardData = currentMeanings[index];
+                    
+                    const cardSlot = document.createElement('div');
+                    cardSlot.className = 'card-slot';
+                    
+                    const label = document.createElement('p');
+                    label.className = 'card-label';
+                    label.textContent = cardData.shortLabel;
+                    
+                    const description = document.createElement('p');
+                    description.className = 'card-description';
+                    description.textContent = cardData.longDescription;
+                    
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = `MTG Card for position ${cardData.shortLabel}`;
+
+                    cardSlot.appendChild(label);
+                    cardSlot.appendChild(description);
+                    cardSlot.appendChild(img);
+                    
+                    galleryContainer.appendChild(cardSlot);
+                });
+
+            } catch (error) {
+                console.error('There was a problem fetching the MTG cards:', error);
+                const displayMessage = error.message.includes('Rate Limit Exceeded')
+                    ? 'Rate limit hit. Please wait 10 seconds and try again.'
+                    : 'Sorry, could not load the MTG cards. Check your connection or API status.';
+                    
+                galleryContainer.innerHTML = `<p>${displayMessage}</p>`;
+            } finally {
+                drawButton.disabled = false;
+            }
+        }
+
+        // --- Event Listeners ---
+        drawButton.addEventListener('click', getMultipleImages);
+        sizeSelector.addEventListener('change', getMultipleImages);
+        languageSelector.addEventListener('change', getMultipleImages);
+
+        // Initial load
+        getMultipleImages(); 
+    </script>
 </body>
 </html>
